@@ -62,3 +62,10 @@ spec:
                                                                 #           Unlike regular KEDA scalers, the environment variable is to be set on the session-scaler, not on the scaled deployment.
                                                                 #           use `envFrom` to set environment variable from kubernetes secrets on this release.  Each trigger can use different connection string.
 ```
+## Limitations
+
+The mechanism behind counting sessions is based on `get-message-sessions` AMQP command described in the [Service Bus AMQP docummentation](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-request-response#enumerate-sessions). Although it provides a list of sessions on a queue or topic's subscription, it **does not** take into account if there are any **active messages**, just the presence of a session in queue.
+
+Currently there is no mechanism to get count of active messages in a particular session. Using available commands, in a worst-case scenario, we would need to peek all messages in the session to determine if there's an active message besides the scheduled ones. This could generate a huge network traffic and is not very efficient.
+
+You can upvote https://github.com/Azure/azure-service-bus/issues/275 to help proritise native support that can be used in KEDA scalers.
