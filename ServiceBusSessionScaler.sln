@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34526.213
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scaler", "src\Scaler\Scaler.csproj", "{5CCED90D-9E7E-4056-AE9E-21101B3D8C59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DF58D86E-CCBD-4A46-A7AA-D96DFA32C3C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_global", "_global", "{831103F4-9C50-4872-9A09-08C29CE76611}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CCED90D-9E7E-4056-AE9E-21101B3D8C59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CCED90D-9E7E-4056-AE9E-21101B3D8C59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CCED90D-9E7E-4056-AE9E-21101B3D8C59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CCED90D-9E7E-4056-AE9E-21101B3D8C59}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CCED90D-9E7E-4056-AE9E-21101B3D8C59} = {DF58D86E-CCBD-4A46-A7AA-D96DFA32C3C1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB86E6D4-DA32-4F5F-B244-65A15E4127F3}
+	EndGlobalSection
+EndGlobal

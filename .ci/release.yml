@@ -1,0 +1,116 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  tags:
+    include:
+      - v*
+  paths:
+    exclude:
+      - README.md
+      - .github/*
+
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - main
+  drafts: false
+  paths:
+    exclude:
+      - README.md
+      - .github/*
+
+resources:
+  repositories:
+    - repository: self
+      type: git
+      ref: main
+    - repository: charts
+      type: github
+      name: miqm/helm-charts
+      endpoint: miqm
+      ref: main
+
+jobs:
+  - job: Main
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+      displayName: Publish
+    ${{ else }}:
+      displayName: Build
+    pool:
+      vmImage: ubuntu-22.04
+    steps:
+      - checkout: self
+        clean: true
+      - task: HelmInstaller@1
+        displayName: Install Helm
+      - task: HelmDeploy@0
+        displayName: Helm package
+        inputs:
+          command: package
+          chartPath: helm
+          destination: $(Build.ArtifactStagingDirectory)/packages
+      - task: DockerInstaller@0
+        displayName: Install Docker
+        inputs:
+          dockerVersion: 24.0.6
+          releaseType: stable
+      - script: |
+          echo "##vso[task.setvariable variable=tag]$(grep appVersion helm/Chart.yaml | cut -f 2 -d '"')"
+        displayName: Set tag
+      - task: Docker@2
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+          displayName: Build and Push
+        ${{ else }}:
+          displayName: Build
+        inputs:
+          ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+            command: buildAndPush
+          ${{ else }}:
+            command: build
+          containerRegistry: 431f8689-26bb-4f69-a9b3-aeb8982ee1ae
+          repository: miqm/session-scaler
+          Dockerfile: src/Scaler/Dockerfile
+          buildContext: $(Build.SourcesDirectory)
+          tags: |
+            $(tag)
+          addPipelineData: false
+          addBaseImageData: false
+      - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+          - task: PublishPipelineArtifact@1
+            displayName: Save artifact
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/packages
+              artifact: packages
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+      - job: HelmPublish
+        displayName: Publish Helm chart
+        dependsOn:
+          - Main
+        pool:
+          vmImage: ubuntu-22.04
+        steps:
+          - checkout: charts
+            clean: true
+            persistCredentials: true
+          - script: |
+              set -eo pipefail
+              git config --global user.email "7921224+miqm@users.noreply.github.com"
+              git config --global user.name "Miq-Automation"
+            displayName: Set git config
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: "packages"
+              targetPath: $(Build.SourcesDirectory)/packages
+          - script: |
+              set -eo pipefail
+              helm repo index . --url https://miqm.github.io/helm-charts
+            displayName: Update index
+          - script: |
+              set -eo pipefail
+              git add .
+              git commit -m "Update index"
+              git push origin HEAD:main
+            displayName: Push changes

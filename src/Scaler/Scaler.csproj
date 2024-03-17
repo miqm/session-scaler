@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <PublishAot>false</PublishAot>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <RootNamespace>miqm.sbss</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Protos\externalscaler.proto" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AMQPNetLite" Version="2.4.9" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.61.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.0-Preview.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="Protos\externalscaler.proto" />
+    </ItemGroup>
+
+</Project>
